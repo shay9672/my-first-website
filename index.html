@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Finder - Your Educational Guide</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #1a2530;
+            --success: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            color: #333;
+        }
+        
+        h1, h2, h3, h4, h5 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+        }
+        
+        /* Header & Navbar */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            transition: all 0.4s ease;
+        }
+        
+        .navbar.scrolled {
+            padding: 10px 0;
+            background-color: rgba(255, 255, 255, 0.98);
+        }
+        
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -1px;
+        }
+        
+        .navbar-brand span {
+            color: var(--secondary);
+        }
+        
+        .nav-link {
+            color: var(--primary) !important;
+            font-weight: 500;
+            margin: 0 8px;
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary) !important;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a2530 100%);
+            color: white;
+            padding: 120px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M500,97C126.7,96.3,0.8,19.8,0,0v100l1000,0V1C1000,19.4,873.3,97.8,500,97z" fill="%23ffffff"/></svg>');
+            background-size: 100% 100px;
+            background-position: bottom;
+            background-repeat: no-repeat;
+            bottom: -1px;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .hero-btn {
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .floating-element {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-element:nth-child(1) {
+            top: 15%;
+            left: 5%;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(52, 152, 219, 0.2);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+        
+        .floating-element:nth-child(2) {
+            top: 25%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background-color: rgba(231, 76, 60, 0.15);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: 1s;
+        }
+        
+        .floating-element:nth-child(3) {
+            bottom: 20%;
+            left: 10%;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(46, 204, 113, 0.1);
+            border-radius: 50%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Features Section */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s ease;
+            height: 100%;
+            border-top: 5px solid var(--secondary);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.05) 0%, rgba(44, 62, 80, 0.05) 100%);
+            z-index: -1;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.4s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: white;
+        }
+        
+        /* Courses Section */
+        .course-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            margin-bottom: 30px;
+            background: white;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .course-img {
+            height: 200px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-img::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.7));
+        }
+        
+        .course-category {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            padding: 100px 0;
+            color: white;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .stat-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        /* Testimonials */
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .testimonial-card::before {
+            content: "\201C";
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(52, 152, 219, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 70px 0 30px;
+        }
+        
+        .footer-heading {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--secondary);
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .social-icons a:hover {
+            background-color: var(--secondary);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .back-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-compass me-2"></i>Path<span>Finder</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#courses">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <a href="#contact" class="btn btn-primary ms-lg-3">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 fade-in">
+                    <h1 class="hero-title">Find Your Perfect <span class="text-primary">Educational Path</span></h1>
+                    <p class="hero-subtitle">Path Finder helps you discover the right courses, institutions, and career opportunities with personalized guidance and support. Your journey to success starts here.</p>
+                    <div class="mt-4">
+                        <a href="#courses" class="btn btn-light hero-btn me-3">Explore Courses</a>
+                        <a href="#contact" class="btn btn-outline-light hero-btn">Get Guidance</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 fade-in">
+                    <div class="text-center mt-5 mt-lg-0">
+                        <div class="position-relative d-inline-block">
+                            <div class="rounded-circle bg-primary" style="width: 300px; height: 300px; opacity: 0.1; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                            <div class="rounded-circle bg-secondary" style="width: 250px; height: 250px; opacity: 0.2; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+                            <img src="https://static.vecteezy.com/system/resources/previews/043/612/154/non_2x/student-flat-circle-icon-vector.jpg" class="rounded-circle img-fluid" style="width: 200px; height: 200px; object-fit: cover;" alt="Student">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" id="features">
+        <div class="container py-5">
+            <h2 class="section-title fade-in">Why Choose <span class="text-primary">Path Finder</span></h2>
+            
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 mb-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h4>Personalized Guidance</h4>
+                        <p>Our AI-powered system analyzes your strengths, interests, and goals to recommend the best educational paths tailored just for you.</p>
+                        <a href="#" class="text-primary text-decoration-none">Learn More <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h4>Extensive Course Library</h4>
+                        <p>Access thousands of courses from top institutions worldwide, with detailed information, reviews, and career outcomes.</p>
+                        <a href="#" class="text-primary text-decoration-none">Browse Courses <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4 fade-in">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Career Pathway Planning</h4>
+                        <p>Visualize your career trajectory with our interactive tools that map out skills, courses, and job opportunities in your field.</p>
+                        <a href="#" class="text-primary text-decoration-none">Plan Your Path <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="py-5 bg-light" id="courses">
+        <div class="container py-5">
+            <h2 class="section-title fade-in">Popular <span class="text-primary">Courses</span></h2>
+            
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="course-card">
+                        <div class="course-img">
+                            <div class="course-category">Technology</div>
+                        </div>
+                        <div class="p-4">
+                            <h4>Full Stack Web Development</h4>
+                            <p class="text-muted">Master front-end and back-end technologies to build modern web applications.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">$299</span>
+                                <a href="#" class="btn btn-sm btn-primary">Enroll Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="course-card">
+                        <div class="course-img">
+                            <div class="course-category">Business</div>
+                        </div>
+                        <div class="p-4">
+                            <h4>Data Science & Analytics</h4>
+                            <p class="text-muted">Learn to extract insights from data using Python, R, and machine learning algorithms.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">$349</span>
+                                <a href="#" class="btn btn-sm btn-primary">Enroll Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="course-card">
+                        <div class="course-img">
+                            <div class="course-category">Design</div>
+                        </div>
+                        <div class="p-4">
+                            <h4>UI/UX Design Masterclass</h4>
+                            <p class="text-muted">Create intuitive user interfaces and engaging user experiences for digital products.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">$249</span>
+                                <a href="#" class="btn btn-sm btn-primary">Enroll Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5 fade-in">
+                <a href="#" class="btn btn-outline-primary btn-lg">View All Courses <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number" id="studentsCount">0</div>
+                        <div class="stat-title">Students Enrolled</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number" id="coursesCount">0</div>
+                        <div class="stat-title">Courses Available</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number" id="partnersCount">0</div>
+                        <div class="stat-title">Partner Institutions</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 fade-in">
+                    <div class="stat-item">
+                        <div class="stat-number" id="successRate">0%</div>
+                        <div class="stat-title">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-5" id="testimonials">
+        <div class="container py-5">
+            <h2 class="section-title fade-in">Student <span class="text-primary">Success Stories</span></h2>
+            
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">Path Finder completely changed my career trajectory. The personalized recommendations helped me discover a field I love but never considered before.</p>
+                        <div class="testimonial-author">
+                            <div class="author-img">JS</div>
+                            <div>
+                                <h5 class="mb-0">Jessica Smith</h5>
+                                <small class="text-muted">Data Analyst at TechCorp</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">As an international student, I was overwhelmed by options. Path Finder simplified everything and connected me with the perfect university program.</p>
+                        <div class="testimonial-author">
+                            <div class="author-img">AR</div>
+                            <div>
+                                <h5 class="mb-0">Ahmed Rahman</h5>
+                                <small class="text-muted">Computer Science Student</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 fade-in">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">The career pathway tool helped me visualize my growth potential and make informed decisions about additional certifications I needed.</p>
+                        <div class="testimonial-author">
+                            <div class="author-img">MP</div>
+                            <div>
+                                <h5 class="mb-0">Maria Perez</h5>
+                                <small class="text-muted">UX Designer at CreativeMinds</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0 fade-in">
+                    <h3 class="navbar-brand text-white mb-3"><i class="fas fa-compass me-2"></i>Path<span>Finder</span></h3>
+                    <p class="mb-4">Your trusted companion in discovering the perfect educational path for your future success.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-6 mb-4 mb-lg-0 fade-in">
+                    <h5 class="footer-heading">Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="#home">Home</a>
+                        <a href="#about">About Us</a>
+                        <a href="#courses">Courses</a>
+                        <a href="#features">Features</a>
+                        <a href="#testimonials">Testimonials</a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0 fade-in">
+                    <h5 class="footer-heading">Contact Info</h5>
+                    <div class="footer-links">
+                        <p><i class="fas fa-map-marker-alt me-2"></i> 123 Education St, Knowledge City</p>
+                        <p><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</p>
+                        <p><i class="fas fa-envelope me-2"></i> info@pathfinder.com</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 fade-in">
+                    <h5 class="footer-heading">Newsletter</h5>
+                    <p class="mb-3">Subscribe to get updates on new courses and educational insights.</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" placeholder="Your Email">
+                        <button class="btn btn-primary" type="button">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright fade-in">
+                <p>&copy; 2023 Path Finder. All rights reserved. | Designed with <i class="fas fa-heart text-danger"></i> for students worldwide</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // Back to top button visibility
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('active');
+            } else {
+                backToTop.classList.remove('active');
+            }
+        });
+
+        // Animated counters
+        function animateCounter(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            let currentValue = 0;
+            const increment = targetValue / 100;
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    currentValue = targetValue;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(currentValue) + suffix;
+            }, 20);
+        }
+
+        // Fade in animation on scroll
+        function checkFadeIn() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('visible');
+                }
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate counters when stats section comes into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter('studentsCount', 12500, '+');
+                        animateCounter('coursesCount', 850, '+');
+                        animateCounter('partnersCount', 120, '+');
+                        animateCounter('successRate', 95, '%');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                observer.observe(statsSection);
+            }
+            
+            // Initial check for fade-in elements
+            checkFadeIn();
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        const navbarToggler = document.querySelector('.navbar-toggler');
+                        const navbarCollapse = document.querySelector('.navbar-collapse');
+                        if (navbarCollapse.classList.contains('show')) {
+                            navbarToggler.click();
+                        }
+                    }
+                });
+            });
+            
+            // Add scroll event listener for fade-in animations
+            window.addEventListener('scroll', checkFadeIn);
+            
+            // Back to top functionality
+            document.getElementById('backToTop').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // Form submission (demo)
+            const newsletterForm = document.querySelector('.footer .input-group');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const emailInput = this.querySelector('input[type="email"]');
+                    if (emailInput.value) {
+                        alert('Thank you for subscribing to our newsletter!');
+                        emailInput.value = '';
+                    }
+                });
+            }
+            
+            // Add hover effect to course cards
+            const courseCards = document.querySelectorAll('.course-card');
+            courseCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
